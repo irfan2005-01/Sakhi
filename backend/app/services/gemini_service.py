@@ -47,14 +47,32 @@ class GeminiService:
             # Run in threadpool if genai synchronous client
             import asyncio
             loop = asyncio.get_running_loop()
-            response = await loop.run_in_executor(
-                None,
-                lambda: self.client.models.generate_content(
-                    model=self.model_name,
-                    contents=prompt,
-                    config=config,
-                )
-            )
+            for attempt in range(3):
+                try:
+                    response = await loop.run_in_executor(
+                        None,
+                        lambda: self.client.models.generate_content(
+                            model=self.model_name,
+                            contents=prompt,
+                            config=config,
+                        )
+                    )
+                    break
+                except Exception as exc:
+                    status = getattr(exc, "status_code", None) or getattr(exc, "code", None)
+                    try:
+                        is_temporary_unavailable = int(status) == 503
+                    except (TypeError, ValueError):
+                        is_temporary_unavailable = False
+                    if not is_temporary_unavailable or attempt == 2:
+                        raise
+                    delay_seconds = 0.5 * (2 ** attempt)
+                    logger.warning(
+                        "Gemini returned temporary HTTP 503; retry %s/2 in %.1fs.",
+                        attempt + 1,
+                        delay_seconds,
+                    )
+                    await asyncio.sleep(delay_seconds)
 
             if response and response.text:
                 try:
