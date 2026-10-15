@@ -155,8 +155,11 @@ class _CycleInsightsViewState extends State<CycleInsightsView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header with Log Action
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 16,
+            runSpacing: 12,
             children: [
               const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,8 +298,11 @@ class _CycleInsightsViewState extends State<CycleInsightsView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 12,
+                    runSpacing: 8,
                     children: [
                       const Text(
                         'Consecutive Cycle Interval Timeline',

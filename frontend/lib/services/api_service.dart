@@ -6,6 +6,8 @@ import 'package:http_parser/http_parser.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/api_models.dart';
 
+class SymptomAnalysisUnavailableException implements Exception {}
+
 class ApiService {
   // Defaulting to http://127.0.0.1:8001 per hackathon MVP spec
   static const String defaultUrl = 'http://127.0.0.1:8001';
@@ -79,10 +81,12 @@ class ApiService {
           'session_id': sessionId,
           'language': language,
         }),
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 60));
 
       if (res.statusCode == 200) {
         return SymptomAnalysisResponse.fromJson(jsonDecode(res.body));
+      } else if (res.statusCode == 503) {
+        throw SymptomAnalysisUnavailableException();
       } else {
         throw Exception('Server returned ${res.statusCode}: ${res.body}');
       }

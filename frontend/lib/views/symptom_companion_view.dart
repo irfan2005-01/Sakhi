@@ -98,7 +98,9 @@ class _SymptomCompanionViewState extends State<SymptomCompanionView> {
       if (mounted) {
         setState(() {
           _isAnalyzing = false;
-          _errorMessage = 'Analysis error: $e\nPlease verify backend connectivity at ${widget.apiService.baseUrl}.';
+          _errorMessage = e is SymptomAnalysisUnavailableException
+              ? 'Live symptom analysis is temporarily unavailable. Please try again shortly. No analysis was generated.'
+              : 'Symptom analysis could not be completed. Please check your connection and try again. No analysis was generated.';
         });
       }
     }
@@ -298,7 +300,10 @@ class _SymptomCompanionViewState extends State<SymptomCompanionView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Language & Voice Control Row
-                  Row(
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 8,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Container(
                         padding: const EdgeInsets.all(6),
@@ -343,7 +348,6 @@ class _SymptomCompanionViewState extends State<SymptomCompanionView> {
                           ),
                         ),
                       ),
-                      const Spacer(),
                       OutlinedButton.icon(
                         onPressed: _isAnalyzing ? null : _toggleVoiceInput,
                         style: OutlinedButton.styleFrom(
@@ -439,7 +443,10 @@ class _SymptomCompanionViewState extends State<SymptomCompanionView> {
                   const SizedBox(height: 16),
 
                   // Action Buttons
-                  Row(
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 8,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       ElevatedButton.icon(
                         onPressed: _isAnalyzing ? null : _runAnalysis,
@@ -448,7 +455,6 @@ class _SymptomCompanionViewState extends State<SymptomCompanionView> {
                             : const Icon(Icons.troubleshoot_outlined, size: 17),
                         label: Text(_isAnalyzing ? 'Analyzing Clinical Narrative...' : 'Analyze Symptoms'),
                       ),
-                      const SizedBox(width: 12),
                       OutlinedButton(
                         onPressed: () {
                           _controller.clear();
@@ -538,8 +544,11 @@ class _SymptomCompanionViewState extends State<SymptomCompanionView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
                         const Text(
                           'Structured Clinical Extraction',
@@ -595,9 +604,11 @@ class _SymptomCompanionViewState extends State<SymptomCompanionView> {
                           children: [
                             const Icon(Icons.timelapse, size: 16, color: AppColors.forestGreen),
                             const SizedBox(width: 8),
-                            Text(
-                              'Reported Cycle Interval: ${_analysisResult!.extracted.reportedCycleGapDays} days between cycles',
-                              style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                            Expanded(
+                              child: Text(
+                                'Reported Cycle Interval: ${_analysisResult!.extracted.reportedCycleGapDays} days between cycles',
+                                style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                              ),
                             ),
                           ],
                         ),
@@ -624,10 +635,12 @@ class _SymptomCompanionViewState extends State<SymptomCompanionView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Row(
+                            const Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              spacing: 8,
+                              runSpacing: 6,
                               children: [
                                 Icon(Icons.help_outline, size: 16, color: AppColors.warningOrange),
-                                SizedBox(width: 8),
                                 Text(
                                   'Clinical Clarification Questions:',
                                   style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold, color: AppColors.warningOrange),
@@ -659,14 +672,16 @@ class _SymptomCompanionViewState extends State<SymptomCompanionView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 10,
+                      runSpacing: 8,
                       children: [
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(color: AppColors.sageGreenLight, borderRadius: BorderRadius.circular(8)),
                           child: const Icon(Icons.shield_outlined, color: AppColors.forestGreen, size: 18),
                         ),
-                        const SizedBox(width: 10),
                         const Text(
                           'Care Navigation (Non-Diagnostic Guidance)',
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal),
